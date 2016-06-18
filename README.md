@@ -8,7 +8,7 @@ Did you see this gradlew? Execute it with oneJar.
 Just import this project as a gradle project (File -> Import -> Gradle)
 
 ### Running
-```java -jar DropwizardExample.jar server hello-world.yml```
+```java -jar DropwizardExample-standalone.jar server hello-world.yml```
 
 ### Configuration
 Everything is inside the `hello-world.yml`.
