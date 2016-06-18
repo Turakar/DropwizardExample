@@ -10,3 +10,11 @@ Just import this project as a gradle project (File -> Import -> Gradle)
 
 ### Running
 ```java -jar DropwizardExample-standalone.jar server hello-world.yml```
+
+### Usage
+Everything happens on `/hello-world`. A normal GET gives you a "Hello Stranger!". If you specify the param name, it will greet you by name. If you do a POST with the data `name=yourname&address=Mr` it will save that and greet more gracefully on GETs.
+
+Curl examples:
+```curl -i http://localhost:8080/hello-world```
+```curl -i http://localhost:8080/hello-world?name=Foo```
+```curl --data "name=Foo&address=Dr" http://localhost:8080/hello-world```
