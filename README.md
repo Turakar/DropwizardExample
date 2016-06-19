@@ -14,7 +14,7 @@ Just import this project as a gradle project (File -> Import -> Gradle)
 ```java -jar xxx.jar server hello-world.yml```
 
 ### Usage
-Everything happens on `/hello-world`. A normal GET gives you a "Hello Stranger!". If you specify the param name, it will greet you by name. If you do a POST with the data `name=yourname&address=Mr` it will save that and greet more gracefully on GETs.
+Everything happens on `/hello-world`. A normal GET gives you a "Hello Stranger!". If you specify the param name in the url, it will greet you by name. If you do a POST with the data `name=yourname&address=Mr` it will save that and greet more gracefully on GETs. If you send a DELETE with a param name in the url, the corresponding record in the database will be deleted.
 
 ### Curl examples:
 
