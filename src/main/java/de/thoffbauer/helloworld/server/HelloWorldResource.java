@@ -3,7 +3,7 @@ package de.thoffbauer.helloworld.server;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.skife.jdbi.v2.DBI;
 
 import com.codahale.metrics.annotation.Timed;
@@ -35,24 +34,27 @@ public class HelloWorldResource {
 	
 	@GET
 	@Timed
-	public Saying sayHello(@QueryParam("name") Optional<String> name) {
+	public Saying sayHello(@QueryParam("name") Optional<String> optionalName) {
 		String address = "";
-		if(name.isPresent()) {
-			User user = dao.findByName(name.get());
+		if(optionalName.isPresent() && !optionalName.get().isEmpty()) {
+			User user = dao.findByName(optionalName.get());
 			if(user != null) {
 				address = user.getAddress() + " ";
 			}
 		}
-		final String value = String.format(template, address + name.or(defaultName));
+		String name = optionalName.or(defaultName);
+		if(name.isEmpty()) {
+			name = defaultName;
+		}
+		final String value = String.format(template, address + name);
 		return new Saying(counter.incrementAndGet(), value);
 	}
 	
 	@POST
-	@Consumes("application/x-www-form-urlencoded")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Timed
-	public Saying register(@FormParam("name") @NotEmpty String name, @FormParam("address") @NotEmpty String address) {
-		User user = new User(name, address);
-		String found = dao.findAddressByName(name);
+	public Saying register(User user) {
+		String found = dao.findAddressByName(user.getName());
 		if(found != null && !found.isEmpty()) {
 			dao.update(user);
 			return new Saying(counter.incrementAndGet(), "Updated");
@@ -60,5 +62,16 @@ public class HelloWorldResource {
 			dao.insert(user);
 			return new Saying(counter.incrementAndGet(), "Registered");
 		}
+	}
+	
+	@DELETE
+	@Timed
+	public Saying unregister(@QueryParam("name") String name) {
+		String found = dao.findAddressByName(name);
+		if(found == null || found.isEmpty()) {
+			return new Saying(counter.incrementAndGet(), "Unknown user!");
+		}
+		dao.delete(name);
+		return new Saying(counter.incrementAndGet(), "Unregistered");
 	}
 }

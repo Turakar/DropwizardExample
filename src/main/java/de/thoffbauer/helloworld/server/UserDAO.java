@@ -26,6 +26,9 @@ public interface UserDAO {
 	@SqlUpdate("update users set address = :address where name = :name")
 	void update(@BindBean User user);
 	
+	@SqlUpdate("delete from users where name = :name")
+	void delete(@Bind("name") String name);
+	
 	class Mapper implements ResultSetMapper<User> {
 		
 		public Mapper() {
